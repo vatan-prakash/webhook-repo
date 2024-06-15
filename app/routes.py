@@ -5,7 +5,7 @@ from app import app
 from app.models import save_event, get_latest_events
 from app.event_model import Event
 
-@app.route('x', methods=['POST'])
+@app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.json
     event = {}
