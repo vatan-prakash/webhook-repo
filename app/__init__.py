@@ -26,7 +26,13 @@ def webhook():
     data = request.json
     event = {}
     print(data)
-    if 'pusher' in data:
+    if data['head_commit']:
+        request_id = data['after']
+        action = 'MERGE'
+        author = data['sender']['login']
+        from_branch = data['ref'].split('/')[-1]
+        to_branch = data['head_commit'].split('/')[1]
+    elif 'pusher' in data:
         request_id = data['after']
         action = 'PUSH'
         author = data['pusher']['name']
@@ -36,12 +42,6 @@ def webhook():
         request_id = data['pull_request']['id']
         action = 'PULL_REQUEST'
         author = data['pull_request']['user']['login']
-        from_branch = data['pull_request']['head']['ref']
-        to_branch = data['pull_request']['base']['ref']
-    elif 'action' in data and data['action'] == 'closed' and data['pull_request']['merged']:
-        request_id = data['after']
-        action = 'MERGE'
-        author = data['sender']['login']
         from_branch = data['pull_request']['head']['ref']
         to_branch = data['pull_request']['base']['ref']
     else:
