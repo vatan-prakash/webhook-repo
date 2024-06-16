@@ -3,8 +3,10 @@ from flask import request, jsonify
 from pymongo import MongoClient, errors
 from app.event_model import Event
 from datetime import datetime
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 app.config.from_object('app.config.Config')
 
 client = MongoClient(app.config['MONGO_URI'])
