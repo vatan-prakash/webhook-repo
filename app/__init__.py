@@ -30,8 +30,8 @@ def webhook():
         request_id = data['after']
         action = 'MERGE'
         author = data['sender']['login']
-        from_branch = data['ref'].split('/')[-1]
-        to_branch = data['head_commit']['message'].split('/')[1]
+        to_branch = data['ref'].split('/')[-1]
+        from_branch = data['head_commit']['message'].split('/')[1].split('/n')[0]
     elif 'pusher' in data:
         request_id = data['after']
         action = 'PUSH'
