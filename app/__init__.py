@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import request, jsonify
 from pymongo import MongoClient, errors
-from app import app
 from app.event_model import Event
 from datetime import datetime
 
