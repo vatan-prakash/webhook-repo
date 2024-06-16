@@ -26,7 +26,7 @@ def webhook():
     data = request.json
     event = {}
     print(data)
-    if data['head_commit'] and data['head_commit']['committer'] and data['head_commit']['committer']['name'] == 'GitHub':
+    if 'head_commit' in data and data['head_commit']['committer'] and data['head_commit']['committer']['name'] == 'GitHub':
         request_id = data['after']
         action = 'MERGE'
         author = data['sender']['login']
