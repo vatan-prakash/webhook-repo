@@ -4,12 +4,13 @@ import uuid
 from app import app
 from app.models import save_event, get_latest_events
 from app.event_model import Event
+from app import get_db  # Import get_db function
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.json
     event = {}
-    print(data)
+
     if 'pusher' in data:
         request_id = data['after']
         action = 'PUSH'
@@ -28,17 +29,23 @@ def webhook():
         to_branch = data['pull_request']['base']['ref']
     else:
         return jsonify({'message': 'Unsupported event'}), 400 
-    timestamp = datetime.utcnow()
 
+    timestamp = datetime.utcnow()
     event = Event(request_id, author, action, from_branch, to_branch, timestamp)
-    save_event(event)
+
+    # Save event to MongoDB
+    db = get_db()
+    save_event(db, event)
     
     return jsonify({'message': 'Event received'}), 200
 
 @app.route('/events', methods=['GET'])
 def get_events():
-    events = get_latest_events()
+    # Retrieve events from MongoDB
+    db = get_db()
+    events = get_latest_events(db)
     return jsonify(events)
+
 @app.route('/', methods=['GET'])
 def hello():
     return "Hello, World!"
