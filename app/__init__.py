@@ -33,6 +33,7 @@ def webhook():
         to_branch = data['ref'].split('/')[-1]
         from_branch = None
     elif 'pull_request' in data:
+        request_id = data['pull_request']['id']
         action = 'PULL_REQUEST'
         author = data['pull_request']['user']['login']
         from_branch = data['pull_request']['head']['ref']
