@@ -26,12 +26,12 @@ def webhook():
     data = request.json
     event = {}
     print(data)
-    if data['head_commit']:
+    if data['head_commit'] and data['head_commit']['committer'] and data['head_commit']['committer']['name'] == 'GitHub':
         request_id = data['after']
         action = 'MERGE'
         author = data['sender']['login']
         from_branch = data['ref'].split('/')[-1]
-        to_branch = data['head_commit'].split('/')[1]
+        to_branch = data['head_commit']['message'].split('/')[1]
     elif 'pusher' in data:
         request_id = data['after']
         action = 'PUSH'
