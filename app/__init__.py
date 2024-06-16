@@ -39,6 +39,7 @@ def webhook():
         from_branch = data['pull_request']['head']['ref']
         to_branch = data['pull_request']['base']['ref']
     elif 'action' in data and data['action'] == 'closed' and data['pull_request']['merged']:
+        request_id = data['after']
         action = 'MERGE'
         author = data['sender']['login']
         from_branch = data['pull_request']['head']['ref']
