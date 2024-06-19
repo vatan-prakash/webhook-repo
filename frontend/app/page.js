@@ -1,27 +1,50 @@
 'use client'
-
 import React, { useState, useEffect } from 'react';
 
 const ActionList = () => {
   const [actions, setActions] = useState([]);
 
   const fetchData = () => {
-    fetch('https://webhook-repo-hsq1.onrender.com/events',{
+    fetch('https://webhook-repo-hsq1.onrender.com/events', {
       headers: {
         'Content-Type': 'application/json'
       }
-    }) // Adjust the URL to match your backend endpoint
+    }) 
       .then(response => response.json())
       .then(data => setActions(data))
       .catch(error => console.error('Error fetching data:', error));
   };
 
   useEffect(() => {
-    fetchData(); // Fetch data initially
-    // const interval = setInterval(fetchData, 15000); // Fetch data every 15 seconds
+    fetchData(); // Initial fetch
+    const intervalId = setInterval(fetchData, 15000); // Fetch data every 15 seconds
 
-    // return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const day = date.getUTCDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return `${day}${getOrdinalSuffix(day)} ${month} ${year} - ${formattedHours}:${formattedMinutes} ${ampm} UTC`;
+  };
+
+  const getOrdinalSuffix = (day) => {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -45,10 +68,10 @@ const ActionList = () => {
                 <td className="py-2 px-4">{action._id}</td>
                 <td className="py-2 px-4">{action.action}</td>
                 <td className="py-2 px-4">{action.author}</td>
-                <td className="py-2 px-4">{action.from_branch}</td> {/* Extract first line */}
+                <td className="py-2 px-4">{action.from_branch}</td>
                 <td className="py-2 px-4">{action.request_id}</td>
-                <td className="py-2 px-4">{new Date(action.timestamp).toLocaleString()}</td>
-                <td className="py-2 px-4">{action.to_branch}</td> {/* Extract first line */}
+                <td className="py-2 px-4">{formatTimestamp(action.timestamp)}</td>
+                <td className="py-2 px-4">{action.to_branch}</td>
               </tr>
             ))}
           </tbody>

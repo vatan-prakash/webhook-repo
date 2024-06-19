@@ -1,17 +1,42 @@
 from flask import Flask
 from flask import request, jsonify
 from pymongo import MongoClient, errors
-from app.event_model import Event
-from datetime import datetime
+# from app.event_model import Event
+# from datetime import datetime
 from flask_cors import CORS, cross_origin
+from datetime import datetime
+
+
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-app.config.from_object('app.config.Config')
+# app.config.from_object('app.config.Config')
 
-client = MongoClient(app.config['MONGO_URI'])
-db = client[app.config['MONGO_DBNAME']]
+client = MongoClient('mongodb+srv://aman:jOL3wdvqr1c7NcU9@cluster0.bhjgn.mongodb.net/')
+db = client['github_webhooks']
 collection = db['events']
+
+from datetime import datetime
+
+class Event:
+    def __init__(self, request_id, author, action, from_branch, to_branch, timestamp=None):
+        self.request_id = request_id
+        self.author = author
+        self.action = action
+        self.from_branch = from_branch
+        self.to_branch = to_branch
+        self.timestamp = timestamp or datetime.utcnow()
+
+    def to_dict(self):
+        return {
+            'request_id': self.request_id,
+            'author': self.author,
+            'action': self.action,
+            'from_branch': self.from_branch,
+            'to_branch': self.to_branch,
+            'timestamp': self.timestamp
+        }
+
 
 
 def save_event(event):
@@ -40,7 +65,7 @@ def webhook():
         author = data['pusher']['name']
         to_branch = data['ref'].split('/')[-1]
         from_branch = None
-    elif 'pull_request' in data:
+    elif 'pull_request' in data:  
         request_id = data['pull_request']['id']
         action = 'PULL_REQUEST'
         author = data['pull_request']['user']['login']
