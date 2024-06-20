@@ -1,7 +1,3 @@
-Sure! Here is a sample README section for your project:
-
----
-
 ## GitHub Webhook Event Tracker
 
 This project is a GitHub webhook event tracker built with Flask and MongoDB, designed to capture and store webhook events from GitHub repositories. The project is structured to handle different types of webhook events such as pushes, merges, and pull requests, and store them in a MongoDB database for later retrieval and analysis.
